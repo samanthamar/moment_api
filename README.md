@@ -1,5 +1,5 @@
 Usage 
-* Update `config.py` with appropriate db details
+* Update `config.py` with appropriate db details (NOTE: need to setup mysql server either locally or through Docker, please see Google doc)
 * Start the server `run.py` 
 
 Sample endpoints
