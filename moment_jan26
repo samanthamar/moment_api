@@ -26,7 +26,7 @@ CREATE TABLE `bookmarks` (
   `id` int NOT NULL AUTO_INCREMENT,
   `user_id` int DEFAULT NULL,
   `resource_id` int DEFAULT NULL,
-  `timestamp` timestamp NULL DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `bookmarks_resources_id_fk` (`resource_id`),
   KEY `bookmarks_users_id_fk` (`user_id`),
@@ -55,7 +55,7 @@ CREATE TABLE `goals` (
   `id` int NOT NULL AUTO_INCREMENT,
   `goal` varchar(128) DEFAULT NULL,
   `user_id` int DEFAULT NULL,
-  `timestamp` timestamp NULL DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `status` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `goals_users_id_fk` (`user_id`),
@@ -85,7 +85,7 @@ CREATE TABLE `reflections` (
   `user_id` int DEFAULT NULL,
   `goal_id` int DEFAULT NULL,
   `tags` varchar(20) DEFAULT NULL,
-  `timestamp` timestamp NULL DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `sentiment` float DEFAULT NULL,
   `resource_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -118,10 +118,10 @@ CREATE TABLE `resources` (
   `id` int NOT NULL AUTO_INCREMENT,
   `link` varchar(64) DEFAULT NULL,
   `tags` varchar(64) DEFAULT NULL,
-  `timestamp` timestamp NULL DEFAULT NULL,
-  `userful` float DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `useful` float DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -130,6 +130,7 @@ CREATE TABLE `resources` (
 
 LOCK TABLES `resources` WRITE;
 /*!40000 ALTER TABLE `resources` DISABLE KEYS */;
+INSERT INTO `resources` VALUES (1,'https://praacticalaac.org/','aac, parents, blog','2020-01-26 19:54:04',1),(2,'https://www.assistiveware.com/','proloquo2go, aac, ipad, iphone, ios ','2020-01-26 15:08:52',1);
 /*!40000 ALTER TABLE `resources` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -168,4 +169,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-01-26 14:43:57
+-- Dump completed on 2020-01-26 15:10:17
