@@ -7,13 +7,13 @@ from resources.Subgoal import SubgoalResource
 from resources.Reflection import ReflectionResource, ReflectionList
 
 api_bp = Blueprint('api', __name__)
-api = Api(api_bp)
+application = Api(api_bp)
 
 # Routes
-api.add_resource(UserResource, '/users')
-api.add_resource(ResResource, '/resources') # get resource 
-api.add_resource(GoalResource, '/goals') # Create goals
-api.add_resource(GoalList, '/goals/<user_id>') # Get all goals and subgoals
-api.add_resource(SubgoalResource, '/subgoals') # create subgoals 
-api.add_resource(ReflectionResource, '/reflections') # create reflections
-api.add_resource(ReflectionList, '/reflections/<user_id>') # get all reflections 
+application.add_resource(UserResource, '/users')
+application.add_resource(ResResource, '/resources') # get resource 
+application.add_resource(GoalResource, '/goals') # Create goals
+application.add_resource(GoalList, '/goals/<user_id>') # Get all goals and subgoals
+application.add_resource(SubgoalResource, '/subgoals') # create subgoals 
+application.add_resource(ReflectionResource, '/reflections') # create reflections
+application.add_resource(ReflectionList, '/reflections/<user_id>') # get all reflections 
