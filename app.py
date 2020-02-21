@@ -2,7 +2,7 @@ from flask import Blueprint
 from flask_restful import Api
 from resources.User import UserResource
 from resources.ResResource import ResResource
-from resources.Goal import GoalResource, GoalList
+from resources.Goal import GoalResource, GoalList, GoalTest
 from resources.Subgoal import SubgoalResource
 from resources.Reflection import ReflectionResource, ReflectionList
 
@@ -16,4 +16,7 @@ api.add_resource(GoalResource, '/goals') # Create goals
 api.add_resource(GoalList, '/goals/<user_id>') # Get all goals and subgoals
 api.add_resource(SubgoalResource, '/subgoals') # create subgoals 
 api.add_resource(ReflectionResource, '/reflections') # create reflections
-api.add_resource(ReflectionList, '/reflections/<user_id>') # get all reflections 
+api.add_resource(ReflectionList, '/reflections/<user_id>') # get all reflections
+
+# TESTING
+api.add_resource(GoalTest, '/goals_test/<user_id>')
