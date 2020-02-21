@@ -40,46 +40,32 @@ class KeywordExtractor:
             text = " ".join(text)
             corpus.append(text)
         return corpus
+
     
-    def create_tfidf_vectors(self, corpus): 
+    def create_tfidf_vectors(self, corpus, doc):
         """
 
         :param corpus: corpus to apply tfidf to
+        :param doc: doc we want keywords
         :return: tuple of tfidf vectors for all items in corpus and feature names  
         """
         tfidf_vectorizer = TfidfVectorizer(use_idf=True, stop_words=stop_words)
         # All tfidf vectors
-        tfidf_vectorizer_vectors = tfidf_vectorizer.fit_transform(corpus)
+        tfidf_vectorizer.fit_transform(corpus)
+        # tfidf vector for the particular doc
+        tfidf_vec = tfidf_vectorizer.transform([doc])
         # Get feature names 
         feature_names = tfidf_vectorizer.get_feature_names()
-        return (tfidf_vectorizer_vectors, feature_names) 
+        return (tfidf_vec, feature_names)
 
-    def extract_topn_from_vector(self, tfidf_vectorizer_vecs, feature_names, doc_index): 
+    def extract_topn_from_vector(self, tfidf_vec, feature_names):
         """
 
-        :param tfidf_vectorizer_vecs: a list of all tfidf vecs for items in corpus 
-        :param feature_names: a list of all feature names 
-        :param doc_index: index of where desired doc is located 
-        :return: corpus of text processed docs
+        :param tfidf_vec: tfidf scores for all keywords for a particular doc
+        :param feature_names: a list of all feature names
+        :return: keywords as a pd dataframe
         """
-        vector_1 = tfidf_vectorizer_vecs[doc_index]
-        df = pd.DataFrame(vector_1.T.todense(), index=feature_names, columns=["tfidf"])
+        df = pd.DataFrame(tfidf_vec.T.todense(), index=feature_names, columns=["tfidf"])
         # Get topn keywords 
         keywords = df.sort_values(by=["tfidf"],ascending=False)[:self.num_keywords] 
         return keywords
-
-def testing():
-    docs = ["the house had a tiny little mouse",
-            "the cat saw the mouse",
-            "the mouse ran away from the house",
-            "the cat finally ate the mouse",
-            "the end of the mouse story"]
-
-    extractor = KeywordExtractor(3) 
-    corpus = extractor.pre_process(docs)
-    (tfidf_vecs,feature_names) = extractor.create_tfidf_vectors(corpus)
-    # Dataframe 
-    keywords = extractor.extract_topn_from_vector(tfidf_vecs,feature_names, 0)
-    print(keywords)
-
-# testing()
