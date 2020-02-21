@@ -1,6 +1,6 @@
 from flask import Flask
 
-application = Flask(_name_)
+application = Flask(__name__)
 
 if __name__ == "__main__":
     CORS(application)
