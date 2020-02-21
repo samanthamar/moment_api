@@ -11,4 +11,4 @@ if __name__ == "__main__":
 
     from models.Model import db
     db.init_app(application)
-    application.run(debug=True)
+    application.run()
