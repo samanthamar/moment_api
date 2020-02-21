@@ -3,7 +3,7 @@ from flask import Flask
 application = Flask(__name__)
 
 if __name__ == "__main__":
-    CORS(application)
+    # CORS(application)
     application.config.from_object("config")
 
     from app import api_bp
