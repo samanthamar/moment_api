@@ -35,7 +35,6 @@ class GoalResource(Resource):
         goal = request.form['goal']
         print(goal)
         status = 'incomplete'
-        # NOTE: WIP!!!
         tags = self.get_keywords(goal, user_id)
         category = request.form['category']
         new_goal = Goal(user_id = user_id,
@@ -54,7 +53,7 @@ class GoalResource(Resource):
         # Add each goal in db to list
         for goal_obj in goal_objs:
             goals.append(goal_obj.goal)
-        # Append the desired goal to end of list so we know it's index
+        # Append the desired goal to list to add it to corpus
         print(goal)
         goals.append(goal)
         # Extract the keywords from the goal
