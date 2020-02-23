@@ -22,6 +22,7 @@ Requirements
     * `flask_restful`
     * `flask_marshmallow`
     * `pymysql`
+    * `flask_cors` 
       
 
 

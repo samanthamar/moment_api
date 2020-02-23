@@ -3,6 +3,7 @@ from flask_restful import Resource
 from models.Model import db
 from models.Goal import Goal, GoalSchema
 from models.Subgoal import Subgoal, SubgoalSchema
+from keywords.Extractor import KeywordExtractor
 
 goals_schema = GoalSchema(many=True)
 goal_schema = GoalSchema()
@@ -32,8 +33,9 @@ class GoalResource(Resource):
         """
         user_id = request.form['user_id']
         goal = request.form['goal']
-        # NOTE: WIP!!!
-        tags = self.generateTags(goal) 
+        print(goal)
+        status = 'incomplete'
+        tags = self.get_keywords(goal, user_id)
         category = request.form['category']
         new_goal = Goal(user_id = user_id,
             goal = goal, 
@@ -43,7 +45,24 @@ class GoalResource(Resource):
         db.session.add(new_goal)
         db.session.commit()
         return {'status': 'success', 'data': goal_schema.dump(new_goal)}, 200
-    
-    # WIP 
-    def generateTags(self, goal):
-        return 'tag1, tag2, tag3'
+
+    def get_keywords(self, goal, user_id):
+        goals = []
+        # Gets list of goal objects
+        goal_objs = Goal.query.filter_by(user_id=user_id)
+        # Add each goal in db to list
+        for goal_obj in goal_objs:
+            goals.append(goal_obj.goal)
+        # Append the desired goal to list to add it to corpus
+        print(goal)
+        goals.append(goal)
+        # Extract the keywords from the goal
+        extractor = KeywordExtractor(3)
+        corpus = extractor.pre_process(goals)
+        (tfidf_vec, feature_names) = extractor.create_tfidf_vectors(corpus, goal)
+        # Dataframe
+        keywords = extractor.extract_topn_from_vector(tfidf_vec, feature_names)
+        # Keywords are indices to pd df, convert it to a list!
+        keywords_list = keywords.index.tolist()
+        keywords =  ', '.join(keywords_list)
+        return keywords

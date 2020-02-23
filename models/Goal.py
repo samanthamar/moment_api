@@ -11,11 +11,12 @@ class Goal(db.Model):
     status = db.Column(db.String(20), default='incomplete')
     category = db.Column(db.String(20))
 
-    def __init__(self, user_id, goal, tags, category):
+    def __init__(self, user_id, goal, tags, category, status):
         self.user_id = user_id 
         self.goal = goal
         self.tags = tags
         self.category = category
+        self.status = status
 
     def __repr__(self):
         return '<Goal %r>' % (self.goal)
