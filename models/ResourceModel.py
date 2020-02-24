@@ -4,15 +4,17 @@ from datetime import datetime
 class ResourceModel(db.Model):
     __tablename__ = 'resources'
     id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(64))
     link = db.Column(db.String(64))
     tags = db.Column(db.String(64))
-    category = db.Column(db.String(20))
+    # category = db.Column(db.String(20))
     timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
 
-    def __init__(self, link, tags, category):
+    def __init__(self, title, link, tags, category):
+        self.title = title
         self.link = link
         self.tags = tags
-        self.category = category
+        # self.category = category
 
     def __repr__(self):
         return '<Resource %r>' % (self.link)

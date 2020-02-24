@@ -41,7 +41,6 @@ class KeywordExtractor:
             corpus.append(text)
         return corpus
 
-    
     def create_tfidf_vectors(self, corpus, doc):
         """
 
