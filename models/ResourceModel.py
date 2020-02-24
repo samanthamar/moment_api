@@ -10,7 +10,7 @@ class ResourceModel(db.Model):
     # category = db.Column(db.String(20))
     timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
 
-    def __init__(self, title, link, tags, category):
+    def __init__(self, title, link, tags):
         self.title = title
         self.link = link
         self.tags = tags
@@ -21,4 +21,4 @@ class ResourceModel(db.Model):
 
 class ResourceSchema(ma.Schema):
     class Meta:
-        fields = ("id", "link", "tags", "category", "timestamp")
+        fields = ("id", "title", "link", "tags", "timestamp")
