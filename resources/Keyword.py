@@ -27,7 +27,6 @@ class KeywordResource(Resource):
         num_keywords = int(request.form['num_keywords'])
         # use this flag for dev! 
         store_in_db = eval(request.form['store_in_db'])
-        print(store_in_db)
         docs = getAllResources()
         # Add desired text to corpus 
         docs.append(text)

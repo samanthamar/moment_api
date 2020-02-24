@@ -5,7 +5,8 @@ class ResourceModel(db.Model):
     __tablename__ = 'resources'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(64))
-    link = db.Column(db.String(64))
+    # Medium text
+    link = db.Column(db.String(64000))
     tags = db.Column(db.String(64))
     # category = db.Column(db.String(20))
     timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
