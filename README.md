@@ -16,13 +16,6 @@ Creating RESTful Endpoints
 
 Requirements 
 * `python 3.7`
-* `pip3 install`: 
-    * `flask`
-    * `flask_sqlalchemy`
-    * `flask_restful`
-    * `flask_marshmallow`
-    * `pymysql`
-    * `flask_cors` 
-      
+* `pip3 install -r requirements.txt` 
 
 
