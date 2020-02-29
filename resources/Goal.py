@@ -35,6 +35,28 @@ class GoalList(Resource):
             goals_list.append({'goal': goal,'subgoals': subgoals, 'completion': {'total_subgoals': subgoal_count, 'completed_subgoals': subgoals_complete}})
         # goals list is a list of dicts 
         return {'status': 'success', 'data': goals_list}, 200
+
+    def put(self, user_id, complete_status):
+        """Completes or incompletes a main goal and all of it's subgoals 
+        """
+        goal = request.form['goal']
+        # Get the goal id from the user id and goal
+        goal = Goal.query.filter_by(user_id=user_id, goal=goal).first() 
+        goal_id = goal.id 
+        # Update goal complete status 
+        goal.status = complete_status 
+        # update this field only if being completed 
+        if complete_status == 'complete':
+            goal.completion_time = datetime.datetime.now()
+        db.session.add(goal)
+        # Get all the subgoals associated with the goal 
+        subgoals = Subgoal.query.filter_by(goal_id=goal_id) 
+        # Update all subgoals to new status
+        for subgoal in subgoals:
+            subgoal.status = complete_status 
+            db.session.add(subgoal)
+        db.session.commit()
+        return {'status': 'success'}, 200
         
 class GoalResource(Resource):
     def post(self):
@@ -66,31 +88,30 @@ class GoalResource(Resource):
                 status = status))
         db.session.commit()
         return {'status': 'success'}, 200
-    
-    def put(self):
-        """Completes or incompletes a main goal and all of it's subgoals 
-        """
-        user_id = request.form['user_id']
-        complete_status = request.form['complete_status']
+
+    def delete(self):
+        """ Deletes a main goal and all of it's subgoals 
+        """  
+        user_id = request.form['user_id'] 
         goal = request.form['goal']
         # Get the goal id from the user id and goal
         goal = Goal.query.filter_by(user_id=user_id, goal=goal).first() 
         goal_id = goal.id 
-        # Update goal complete status 
-        goal.status = complete_status 
-        # update this field only if being completed 
-        if complete_status == 'complete':
-            goal.completion_time = datetime.datetime.now()
-        db.session.add(goal)
         # Get all the subgoals associated with the goal 
         subgoals = Subgoal.query.filter_by(goal_id=goal_id) 
-        # Update all subgoals to new status
+        # delete all the subgoals
         for subgoal in subgoals:
-            subgoal.status = complete_status 
-            db.session.add(subgoal)
+            db.session.delete(subgoal)
+        # delete the main goal
+        db.session.delete(goal)
         db.session.commit()
         return {'status': 'success'}, 200
-
+    
+    def put(self): 
+        """ Edit a main goal and its subgoals, ability to delete subgoals
+        """  
+        pass
+        
 
     # NOTE: this could be refactored!!! 
     def generate_keywords_subgoals(self, subgoal, goal_id):

@@ -19,10 +19,8 @@ class ReflectionResource(Resource):
         """ Creates a new relfection for a user
         """
         user_id = request.form['user_id']
-        goal_id = request.form['goal_id']
         reflection = request.form['reflection']
         new_reflection = ReflectionModel(user_id = user_id,
-            goal_id = goal_id, 
             reflection = reflection) 
         db.session.add(new_reflection)
         db.session.commit()

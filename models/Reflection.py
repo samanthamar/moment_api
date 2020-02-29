@@ -5,18 +5,18 @@ class ReflectionModel(db.Model):
     __tablename__ = 'reflections'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'))
-    reflection = db.Column(db.String(128))
-    timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
+    reflection = db.Column(db.JSON)
+    date_created = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
+    last_modified = db.Column(db.TIMESTAMP)
 
-    def __init__(self, user_id, goal_id, reflection):
+    def __init__(self, user_id, reflection, last_modified=None):
         self.user_id = user_id
-        self.goal_id = goal_id
         self.reflection = reflection
+        self.last_modified = last_modified
 
     def __repr__(self):
         return '<Reflection %r>' % (self.reflection)
 
 class ReflectionSchema(ma.Schema):
     class Meta:
-        fields = ("id", "user_id", "goal_id", "timestamp", "reflection")
+        fields = ("id", "user_id", "reflection", "date_created", "last_modified")
