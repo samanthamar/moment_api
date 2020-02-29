@@ -4,6 +4,7 @@ from models.Model import db
 from models.Goal import Goal, GoalSchema
 from models.Subgoal import Subgoal, SubgoalSchema
 from keywords.Extractor import KeywordExtractor
+import datetime 
 
 goals_schema = GoalSchema(many=True)
 goal_schema = GoalSchema()
@@ -64,6 +65,32 @@ class GoalResource(Resource):
                 tags = tags, 
                 status = status))
         db.session.commit()
+        return {'status': 'success'}, 200
+    
+    def put(self):
+        """Completes or incompletes a main goal and all of it's subgoals 
+        """
+        user_id = request.form['user_id']
+        complete_status = request.form['complete_status']
+        goal = request.form['goal']
+        # Get the goal id from the user id and goal
+        goal = Goal.query.filter_by(user_id=user_id, goal=goal).first() 
+        goal_id = goal.id 
+        # Update goal complete status 
+        goal.status = complete_status 
+        # update this field only if being completed 
+        if complete_status == 'complete':
+            goal.completion_time = datetime.datetime.now()
+        db.session.add(goal)
+        # Get all the subgoals associated with the goal 
+        subgoals = Subgoal.query.filter_by(goal_id=goal_id) 
+        # Update all subgoals to new status
+        for subgoal in subgoals:
+            subgoal.status = complete_status 
+            db.session.add(subgoal)
+        db.session.commit()
+        return {'status': 'success'}, 200
+
 
     # NOTE: this could be refactored!!! 
     def generate_keywords_subgoals(self, subgoal, goal_id):
