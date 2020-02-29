@@ -19,12 +19,19 @@ class GoalList(Resource):
         goals_list = []
         goals = Goal.query.filter_by(user_id=user_id, status=complete_status)
         # For each high level goal, get the subgoal associated for each 
+        subgoal_count = 0 
+        subgoals_complete = 0 
         for goal in goals:
             goal_id = goal.id 
             subgoals = Subgoal.query.filter_by(goal_id=goal_id)
+            # Iterate through subgoals to get total and number of inc subgoals 
+            for subgoal in subgoals:
+                subgoal_count += 1 
+                if subgoal.status == 'complete':
+                    subgoals_complete += 1 
             subgoals = subgoals_schema.dump(subgoals)
             goal = goal_schema.dump(goal)
-            goals_list.append({'goal': goal,'subgoals': subgoals})
+            goals_list.append({'goal': goal,'subgoals': subgoals, 'completion': {'total_subgoals': subgoal_count, 'completed_subgoals': subgoals_complete}})
         # goals list is a list of dicts 
         return {'status': 'success', 'data': goals_list}, 200
         
