@@ -10,14 +10,15 @@ goal_schema = GoalSchema()
 subgoals_schema = SubgoalSchema(many=True)
 
 class GoalList(Resource): 
-    def get(self, user_id):
-        """ Gets all goals and related subgoals 
-        associated with a user_id 
-        """
-        goals_list = []  
-        # Get all high level goals for the user 
-        goals = Goal.query.filter_by(user_id=user_id)
-        # For each high level goal, get the subgoals for each 
+    def get(self,user_id, complete_status): 
+        '''
+        Input: user_id - id of the user, 
+               complete_status - complete or incomplete
+        Return: list of complete or incomplete goals 
+        '''
+        goals_list = []
+        goals = Goal.query.filter_by(user_id=user_id, status=complete_status)
+        # For each high level goal, get the subgoal associated for each 
         for goal in goals:
             goal_id = goal.id 
             subgoals = Subgoal.query.filter_by(goal_id=goal_id)
@@ -26,7 +27,7 @@ class GoalList(Resource):
             goals_list.append({'goal': goal,'subgoals': subgoals})
         # goals list is a list of dicts 
         return {'status': 'success', 'data': goals_list}, 200
-
+        
 class GoalResource(Resource):
     def post(self):
         """ Creates a new high level goal for user 
