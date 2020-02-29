@@ -9,13 +9,11 @@ class Subgoal(db.Model):
     tags = db.Column(db.String(64)) 
     timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
     status = db.Column(db.String(20), default='incomplete')
-    category = db.Column(db.String(20))
 
-    def __init__(self, subgoal, goal_id, tags, category, status):
+    def __init__(self, subgoal, goal_id, tags, status):
         self.subgoal = subgoal 
         self.tags = tags
         self.goal_id = goal_id
-        self.category = category
         self.status = status
 
     def __repr__(self):
@@ -25,4 +23,4 @@ class SubgoalSchema(ma.Schema):
     class Meta:
         fields = ("id", "subgoal", 
                     "goal_id", "tags", 
-                    "timestamp", "status", "category")
+                    "timestamp", "status")

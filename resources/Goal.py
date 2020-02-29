@@ -11,11 +11,11 @@ subgoals_schema = SubgoalSchema(many=True)
 
 class GoalList(Resource): 
     def get(self,user_id, complete_status): 
-        '''
+        """
         Input: user_id - id of the user, 
                complete_status - complete or incomplete
         Return: list of complete or incomplete goals 
-        '''
+        """
         goals_list = []
         goals = Goal.query.filter_by(user_id=user_id, status=complete_status)
         # For each high level goal, get the subgoal associated for each 
@@ -30,28 +30,62 @@ class GoalList(Resource):
         
 class GoalResource(Resource):
     def post(self):
-        """ Creates a new high level goal for user 
+        """ Creates a new high level goal for user and subgoals
         """
+        # First create the high level goal
         user_id = request.form['user_id']
         goal = request.form['goal']
-        print(goal)
-        status = 'incomplete'
-        tags = self.get_keywords(goal, user_id)
         category = request.form['category']
+        goal_tags = self.generate_keywords_goals(goal=goal, user_id=user_id)
+        status = 'incomplete'
         new_goal = Goal(user_id = user_id,
             goal = goal, 
-            tags = tags, 
+            tags = goal_tags, 
             status = status, 
             category = category)
         db.session.add(new_goal)
         db.session.commit()
-        return {'status': 'success', 'data': goal_schema.dump(new_goal)}, 200
+        new_goal_id = goal_schema.dump(new_goal)['id']
+        # Next, create the subgoals 
+        n_subgoals = request.form['number_of_subgoals']
+        for i in range(int(n_subgoals)):
+            field = f'subgoal{i+1}'
+            subgoal = request.form[field]
+            tags = self.generate_keywords_subgoals(subgoal=subgoal, goal_id=new_goal_id)
+            db.session.add(Subgoal(goal_id = new_goal_id,
+                subgoal = subgoal,
+                tags = tags, 
+                status = status))
+        db.session.commit()
 
-    def get_keywords(self, goal, user_id):
+    # NOTE: this could be refactored!!! 
+    def generate_keywords_subgoals(self, subgoal, goal_id):
+        subgoals = []
+        # Gets list of subgoal objects
+        subgoal_objs = Subgoal.query.filter_by(goal_id=goal_id)
+        # Add each subgoal in db to list
+        for subgoal_obj in subgoal_objs:
+            subgoals.append(subgoal_obj.subgoal)
+        # Append the desired goal to list to add it to corpus
+        print(subgoal)
+        subgoals.append(subgoal)
+        # Extract the keywords from the goal
+        extractor = KeywordExtractor(3)
+        corpus = extractor.pre_process(subgoals)
+        (tfidf_vec, feature_names) = extractor.create_tfidf_vectors(corpus, subgoal)
+        # Dataframe
+        keywords = extractor.extract_topn_from_vector(tfidf_vec, feature_names)
+        # Keywords are indices to pd df, convert it to a list!
+        keywords_list = keywords.index.tolist()
+        keywords = ', '.join(keywords_list)
+        return keywords
+
+    # NOTE: this could be refactored!!! 
+    def generate_keywords_goals(self, goal, user_id):
         goals = []
-        # Gets list of goal objects
+        # Gets list of subgoal objects
         goal_objs = Goal.query.filter_by(user_id=user_id)
-        # Add each goal in db to list
+        # Add each subgoal in db to list
         for goal_obj in goal_objs:
             goals.append(goal_obj.goal)
         # Append the desired goal to list to add it to corpus
@@ -65,5 +99,5 @@ class GoalResource(Resource):
         keywords = extractor.extract_topn_from_vector(tfidf_vec, feature_names)
         # Keywords are indices to pd df, convert it to a list!
         keywords_list = keywords.index.tolist()
-        keywords =  ', '.join(keywords_list)
+        keywords = ', '.join(keywords_list)
         return keywords
