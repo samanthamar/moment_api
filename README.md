@@ -1,5 +1,6 @@
 Usage 
 * Update `config.py` with appropriate db details (NOTE: need to setup mysql server either locally or through Docker, please see Google doc)
+* Remember to keep the DB up to date! 
 * Start the server `run.py` 
 
 Sample endpoints
@@ -18,4 +19,5 @@ Requirements
 * `python 3.7`
 * `pip3 install -r requirements.txt` 
 
-
+Postman Request Link
+* https://www.getpostman.com/collections/72f074d11681690c62f0 
