@@ -21,6 +21,38 @@ def getAllResources():
         docs.append(obj['text'])
     return docs
 
+class Search(Resource): 
+    def get(self):
+        keywords = (request.get_json()['keywords']).lower()
+        ke = KeywordExtractor(0)
+        keywords_processed = ke.pre_process_single(keywords)
+        # first get all the resources 
+        resources = ResourceModel.query.all()
+        resources = resources_schema.dump(resources)
+        # Check for any matches 
+        matches = []
+        for resource in resources: 
+            title = (resource['title']).lower()
+            if keywords == title: 
+                matches.append(resource)
+            # now check for matching keywords
+            res_keywords = resource['tags'].split(",")
+            print(res_keywords)
+            match = 0 
+            total = len(res_keywords)
+            print(keywords_processed)
+            for r in res_keywords:
+                # remove trailing and leading whitespaces
+                r = r.strip()
+                if r in keywords_processed: 
+                    match += 1 
+            threshold = match/total
+            print(threshold)
+            # At least 40% of keywords must match 
+            if threshold > 0.4:
+                matches.append(resource)
+        return {'status': 'success', 'data': matches}, 200
+        
 class ResResource(Resource):
     def get(self):
         """ Gets all resources in database
@@ -32,7 +64,6 @@ class ResResource(Resource):
     def post(self): 
         """ Stores raw text in db and stores the resource info
         """
-        print('you are here')
         text = request.form['text']
         link = request.form['link']
         title = request.form['title']

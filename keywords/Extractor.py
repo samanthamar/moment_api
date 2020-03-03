@@ -11,7 +11,27 @@ stop_words = set(stopwords.words("english"))
 class KeywordExtractor:
     def __init__(self, num_keywords):
         self.num_keywords = num_keywords 
-    
+
+    # NOTE: Can refactor this with below 
+    def pre_process_single(self, d): 
+        # Remove puncuation
+        text = re.sub('[^a-zA-Z]', ' ', d)
+        # Remove tags
+        text = re.sub("&lt;/?.*?&gt;", " &lt;&gt; ", text)
+        # remove special characters and digits
+        text = re.sub("(\\d|\\W)+", " ", text)
+        ##Convert to list from string
+        text = text.split()
+        ##Stemming
+        ps = PorterStemmer()
+        # Lemmatisation
+        lem = WordNetLemmatizer()
+        text = [lem.lemmatize(word) for word in text if not word in
+                                                            stop_words]
+        text = " ".join(text)
+        text = text.split()
+        return text 
+        
     def pre_process(self, docs): 
         """
 
@@ -19,7 +39,6 @@ class KeywordExtractor:
         :return: corpus of text processed docs
         """
         corpus = []
-        print(corpus)
         for d in docs:
             # Remove puncuation
             text = re.sub('[^a-zA-Z]', ' ', d)
