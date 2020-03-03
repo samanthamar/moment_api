@@ -7,15 +7,6 @@ from keywords.Extractor import KeywordExtractor
 subgoals_schema = SubgoalSchema(many=True)
 subgoal_schema = SubgoalSchema()
 
-# class SubgoalList(Resource): 
-#     def get(self, user_id):
-#         # Get goals for a particular user 
-#         # NOTE: want to return goals and their corresponding subgoals
-#         # goals = Goal.query.filter_by(user_id=user_id)
-#         # goals = goals_schema.dump(goals)
-#         # return {'status': 'success', 'data': goals}, 200
-#         pass
-
 class SubgoalResource(Resource):
     def post(self):
         """ Creates a new subgoal related to a high level goal
@@ -33,6 +24,20 @@ class SubgoalResource(Resource):
         db.session.add(new_subgoal)
         db.session.commit()
         return {'status': 'success', 'data': subgoal_schema.dump(new_subgoal) }, 200
+    
+    # NOTE: tested
+    def put(self): 
+        """ Update completion status for subgoals 
+        """
+        subgoals = request.get_json()['subgoals']
+        for subgoal in subgoals: 
+            subgoal_id = subgoal['subgoal_id']
+            status = subgoal['status']
+            subgoal_to_update = Subgoal.query.filter_by(id=subgoal_id).first()
+            subgoal_to_update.status = status 
+            db.session.add(subgoal_to_update)
+        db.session.commit()
+        return {'status': 'success'}, 200
 
     def generate_keywords(self, subgoal, goal_id):
         subgoals = []
