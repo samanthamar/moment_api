@@ -11,6 +11,7 @@ goal_schema = GoalSchema()
 subgoals_schema = SubgoalSchema(many=True)
 
 class GoalList(Resource): 
+    # NOTE: tested
     def get(self,user_id, complete_status): 
         """
         Input: user_id - id of the user, 
@@ -36,18 +37,20 @@ class GoalList(Resource):
         # goals list is a list of dicts 
         return {'status': 'success', 'data': goals_list}, 200
 
+    # NOTE: tested 
     def put(self, user_id, complete_status):
         """Completes or incompletes a main goal and all of it's subgoals 
         """
-        goal = request.form['goal']
-        # Get the goal id from the user id and goal
-        goal = Goal.query.filter_by(user_id=user_id, goal=goal).first() 
-        goal_id = goal.id 
+        goal_id = request.get_json()['goal_id']
+        goal = Goal.query.filter_by(id=goal_id).first() 
         # Update goal complete status 
         goal.status = complete_status 
         # update this field only if being completed 
         if complete_status == 'complete':
             goal.completion_time = datetime.datetime.now()
+        else: 
+            # Reset completion time if incompleting the goal
+            goal.completion_time = None
         db.session.add(goal)
         # Get all the subgoals associated with the goal 
         subgoals = Subgoal.query.filter_by(goal_id=goal_id) 
@@ -57,7 +60,8 @@ class GoalList(Resource):
             db.session.add(subgoal)
         db.session.commit()
         return {'status': 'success'}, 200
-        
+
+# NOTE: tested       
 class GoalResource(Resource):
     def post(self):
         """ Creates a new high level goal for user and subgoals
@@ -89,14 +93,12 @@ class GoalResource(Resource):
         db.session.commit()
         return {'status': 'success'}, 200
 
+    # NOTE: tested
     def delete(self):
         """ Deletes a main goal and all of it's subgoals 
         """  
-        user_id = request.form['user_id'] 
-        goal = request.form['goal']
-        # Get the goal id from the user id and goal
-        goal = Goal.query.filter_by(user_id=user_id, goal=goal).first() 
-        goal_id = goal.id 
+        goal_id = request.get_json()['goal_id']
+        goal = Goal.query.filter_by(id=goal_id).first() 
         # Get all the subgoals associated with the goal 
         subgoals = Subgoal.query.filter_by(goal_id=goal_id) 
         # delete all the subgoals
@@ -107,12 +109,43 @@ class GoalResource(Resource):
         db.session.commit()
         return {'status': 'success'}, 200
     
+    # NOTE: tested
     def put(self): 
         """ Edit a main goal and its subgoals, ability to delete subgoals
         """  
-        pass
+        # Extract the goal information from json
+        main_goal = request.get_json()['main_goal']
+        goal_id = main_goal['goal_id']
+        category = main_goal['category']
+        goal = main_goal['goal']
+        # get the goal to update 
+        goal_update = Goal.query.filter_by(id=goal_id).first()
+        goal_update.goal = goal
+        goal_update.category = category 
+        db.session.add(goal_update)
+        # Extract the subgoal information 
+        subgoal_data = request.get_json()['subgoals']
+        subgoal_ids_edit = [] # keep track of this for deletion 
+        # for each subgoal, update the subgoal 
+        if subgoal_data:
+            for s in subgoal_data: 
+                subgoal_id = s['subgoal_id']
+                subgoal_ids_edit.append(subgoal_id)
+                subgoal = s['subgoal']
+                # get the subgoal to update
+                subgoal_update = Subgoal.query.filter_by(id=subgoal_id).first()
+                subgoal_update.subgoal = subgoal
+                db.session.add(subgoal_update)
+        # need to check if any subgoals were deleted, to do this, we just compare the subgoals 
+        # to update and whats in the database. if it does not appear in the edit list, then we delete
+        subgoals_in_db = subgoals_schema.dump(Subgoal.query.filter_by(goal_id=goal_id))
+        for subgoal in subgoals_in_db: 
+            subgoal_id = subgoal['id']
+            if subgoal_id not in subgoal_ids_edit: 
+                db.session.delete(Subgoal.query.filter_by(id=subgoal_id).first())
+        db.session.commit()
+        return {'status': 'success'}, 200 
         
-
     # NOTE: this could be refactored!!! 
     def generate_keywords_subgoals(self, subgoal, goal_id):
         subgoals = []
