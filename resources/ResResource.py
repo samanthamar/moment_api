@@ -22,8 +22,9 @@ def getAllResources():
     return docs
 
 class Search(Resource): 
-    def get(self):
-        keywords = (request.get_json()['keywords']).lower()
+    def get(self, keywords):
+        # keywords = (request.get_json()['keywords']).lower()
+        print(keywords)
         ke = KeywordExtractor(0)
         keywords_processed = ke.pre_process_single(keywords)
         # first get all the resources 
@@ -49,7 +50,7 @@ class Search(Resource):
             threshold = match/total
             print(threshold)
             # At least 40% of keywords must match 
-            if threshold > 0.4:
+            if threshold >= 0.4:
                 matches.append(resource)
         return {'status': 'success', 'data': matches}, 200
         
