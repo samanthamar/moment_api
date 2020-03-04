@@ -15,7 +15,7 @@ api = Api(api_bp)
 # Routes
 api.add_resource(UserResource, '/users')
 api.add_resource(ResResource, '/resources') # get resource 
-api.add_resource(Search, '/search/<keywords>') # search resources ie. localhost:5000/api/search/parent+aac+iphone+blog+ios
+api.add_resource(Search, '/resources/<keywords>') # search resources ie. localhost:5000/api/search/parent+aac+iphone+blog+ios
 api.add_resource(GoalResource, '/goals') # Create goals and generate keywords
 api.add_resource(GoalList, '/goals/<user_id>/<complete_status>') # Get all goals and subgoals
 api.add_resource(SubgoalResource, '/subgoals') # create subgoals, edit subgoals
