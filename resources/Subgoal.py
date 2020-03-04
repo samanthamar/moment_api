@@ -7,6 +7,14 @@ from keywords.Extractor import KeywordExtractor
 subgoals_schema = SubgoalSchema(many=True)
 subgoal_schema = SubgoalSchema()
 
+class SubgoalsResource(Resource): 
+    def get(self,goal_id): 
+        """ Get subgoals based on goal_id 
+        """
+        subgoals = Subgoal.query.filter_by(goal_id=goal_id)
+        subgoals = subgoals_schema.dump(subgoals)
+        return {'status': 'success', 'data': subgoals}, 200
+
 class SubgoalResource(Resource):
     def post(self):
         """ Creates a new subgoal related to a high level goal
