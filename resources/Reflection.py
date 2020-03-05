@@ -25,6 +25,7 @@ class ReflectionResource(Resource):
         title = request.get_json()['title']
         reflection = request.get_json()['reflection']
         new_reflection = ReflectionModel(user_id = user_id,
+            title=title,
             reflection = reflection) 
         db.session.add(new_reflection)
         db.session.commit()
