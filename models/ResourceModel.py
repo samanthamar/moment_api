@@ -9,7 +9,7 @@ class ResourceModel(db.Model):
     link = db.Column(db.String(64000))
     tags = db.Column(db.String(64))
     # category = db.Column(db.String(20))
-    timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
+    timestamp = db.Column(db.TIMESTAMP, default=datetime.utcnow(), nullable=False)
 
     def __init__(self, title, link, tags):
         self.title = title

@@ -7,7 +7,7 @@ class Goal(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     goal = db.Column(db.String(64)) 
     tags = db.Column(db.String(64)) 
-    timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
+    timestamp = db.Column(db.TIMESTAMP, default=datetime.utcnow(), nullable=False)
     status = db.Column(db.String(20), default='incomplete')
     category = db.Column(db.String(20))
     completion_time = db.Column(db.TIMESTAMP) 

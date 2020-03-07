@@ -7,7 +7,7 @@ class Subgoal(db.Model):
     subgoal = db.Column(db.String(64)) 
     goal_id = db.Column(db.Integer, db.ForeignKey('goals.id'))
     tags = db.Column(db.String(64)) 
-    timestamp = db.Column(db.TIMESTAMP, default=datetime.now(), nullable=False)
+    timestamp = db.Column(db.TIMESTAMP, default=datetime.utcnow(), nullable=False)
     status = db.Column(db.String(20), default='incomplete')
 
     def __init__(self, subgoal, goal_id, tags, status):
