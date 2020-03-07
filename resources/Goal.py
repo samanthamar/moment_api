@@ -104,6 +104,7 @@ class GoalResource(Resource):
         # delete all the subgoals
         for subgoal in subgoals:
             db.session.delete(subgoal)
+            db.session.commit()
         # delete the main goal
         db.session.delete(goal)
         db.session.commit()
@@ -136,7 +137,7 @@ class GoalResource(Resource):
         # Replace the subgoals for the user 
         for subgoal in subgoals:
             subgoal_name = subgoal['subgoal']
-            status = subgoal['status']
+            status = 'incomplete'
             tags = self.generate_keywords_subgoals(subgoal_name, goal_id)
             new_subgoal = Subgoal(subgoal=subgoal_name, goal_id=goal_id, tags=tags, status=status)
             db.session.add(new_subgoal)
