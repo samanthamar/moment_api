@@ -8,14 +8,13 @@ class ResourceModel(db.Model):
     # Medium text
     link = db.Column(db.String(64000))
     tags = db.Column(db.String(64))
-    # category = db.Column(db.String(20))
-    timestamp = db.Column(db.TIMESTAMP, default=datetime.utcnow(), nullable=False)
+    timestamp = db.Column(db.TIMESTAMP, nullable=False)
 
     def __init__(self, title, link, tags):
         self.title = title
         self.link = link
         self.tags = tags
-        # self.category = category
+        self.timestamp = datetime.utcnow()
 
     def __repr__(self):
         return '<Resource %r>' % (self.link)

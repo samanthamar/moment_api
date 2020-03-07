@@ -7,7 +7,7 @@ class Goal(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     goal = db.Column(db.String(64)) 
     tags = db.Column(db.String(64)) 
-    timestamp = db.Column(db.TIMESTAMP, default=datetime.utcnow(), nullable=False)
+    timestamp = db.Column(db.TIMESTAMP, nullable=False)
     status = db.Column(db.String(20), default='incomplete')
     category = db.Column(db.String(20))
     completion_time = db.Column(db.TIMESTAMP) 
@@ -18,7 +18,8 @@ class Goal(db.Model):
         self.tags = tags
         self.category = category
         self.status = status
-        completion_time = completion_time
+        self.timestamp = datetime.utcnow()
+        self.completion_time = completion_time
 
     def __repr__(self):
         return '<Goal %r>' % (self.goal)

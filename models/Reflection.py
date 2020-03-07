@@ -7,7 +7,7 @@ class ReflectionModel(db.Model):
     title = db.Column(db.String(240))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     reflection = db.Column(db.JSON)
-    date_created = db.Column(db.TIMESTAMP, default=datetime.utcnow(), nullable=False)
+    date_created = db.Column(db.TIMESTAMP, nullable=False)
     last_modified = db.Column(db.TIMESTAMP)
 
     def __init__(self, title, user_id, reflection, last_modified=None):
@@ -15,6 +15,7 @@ class ReflectionModel(db.Model):
         self.user_id = user_id
         self.reflection = reflection
         self.last_modified = last_modified
+        self.date_created = datetime.utcnow()
 
     def __repr__(self):
         return '<Reflection %r>' % (self.reflection)
