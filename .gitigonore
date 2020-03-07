@@ -1,2 +1,6 @@
 __pycache__/
 .idea/
+__pycache__/
+keywords/__pycache__/
+models/__pycache__/
+resources/__pycache__/
