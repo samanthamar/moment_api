@@ -7,7 +7,7 @@ from resources.Subgoal import SubgoalResource, SubgoalsResource
 from resources.Reflection import ReflectionResource, ReflectionList
 from resources.Keyword import KeywordResource
 from resources.CrawledData import CrawledRawDataResource
-
+from resources.Resource2 import Search2, Resource2
 
 api_bp = Blueprint('api', __name__)
 api = Api(api_bp)
@@ -24,3 +24,6 @@ api.add_resource(ReflectionResource, '/reflections') # create reflections
 api.add_resource(ReflectionList, '/reflections/<user_id>') # get all reflections
 api.add_resource(KeywordResource, '/keywords') # post to get keywords
 api.add_resource(CrawledRawDataResource, '/crawledrawdata') # add text file to database
+ 
+api.add_resource(Resource2, '/resource2') # add new resource, get all resources 
+api.add_resource(Search2, '/search/<query>')
