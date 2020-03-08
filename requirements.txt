@@ -6,3 +6,4 @@ pymysql
 flask_cors
 pandas
 nltk 
+numpy

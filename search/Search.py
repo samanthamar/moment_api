@@ -4,8 +4,6 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from models.ResourceModel2 import ResourceModel2, ResourceSchema2
-# resources_schema = ResourceSchema2(many=True)
-# resource_schema = ResourceSchema2()
 
 class Search:
     def __init__(self, query):
@@ -14,7 +12,6 @@ class Search:
     def tfidf(self, resources): 
         # create the dataframe from list of dicts
         df = pd.DataFrame(resources)
-        # print(df)
         # Create the tfidf vectorizer
         vectorizer = TfidfVectorizer()
         X = vectorizer.fit_transform(df['text'])
@@ -22,9 +19,12 @@ class Search:
         query_vec = vectorizer.transform([self.query])
         # Cosine similarity 
         results = cosine_similarity(X,query_vec).reshape((-1,))
+        print(results)
         matches = []
         # Return top 10 
+        # NOTE: even if score is 0 it may display because of number of documents 
         for i in results.argsort()[-10:][::-1]:
-            print(df)
-            matches.append({'res_id': int(df.iloc[i]['id']), 'title':df.iloc[i]['title']})
+            matches.append({'res_id': int(df.iloc[i]['id']), 
+            'title':df.iloc[i]['title'],
+            'link':df.iloc[i]['link']})
         return matches 
