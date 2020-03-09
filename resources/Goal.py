@@ -85,6 +85,8 @@ class GoalResource(Resource):
         for i in range(int(n_subgoals)):
             field = f'subgoal{i+1}'
             subgoal = request.form[field]
+            if subgoal == "":
+                continue 
             tags = self.generate_keywords_subgoals(subgoal=subgoal, goal_id=new_goal_id)
             db.session.add(Subgoal(goal_id = new_goal_id,
                 subgoal = subgoal,
