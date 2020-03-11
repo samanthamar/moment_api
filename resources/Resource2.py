@@ -8,7 +8,6 @@ from search.preprocess import preprocess
 resources_schema = ResourceSchema2(many=True)
 resource_schema = ResourceSchema2()
 
-# NOTE: WIP!!! 
 class Search2(Resource):
     def get(self, query): 
         """Search for a resource in the DB 

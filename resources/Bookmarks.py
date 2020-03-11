@@ -28,18 +28,23 @@ class Bookmarks(Resource):
         return {'status': 'success', 'data': resources}, 200
             
 class BookmarkResource(Resource):
-    def put(self, user_id, resource_id, action): 
-        """ Bookmark or unbookmark a resource 
+    def put(self):
+        """ Add or remove a bookmark from a resource
         """
-        if action == 'bookmark':
+        is_bookmarked = request.get_json()['is_bookmarked'] # expect a bool
+        resource_id = request.get_json()['resource_id'] # this can be null if unbookmarking! 
+        user_id = request.get_json()['user_id']
+
+        if is_bookmarked: 
+            # Create a new bookmark
             new_bookmark = BookmarksModel(user_id=user_id, resource_id=resource_id)
             db.session.add(new_bookmark)
-        elif action == 'unbookmark':
-            # first get the bookmark id 
+            db.session.commit()
+            return {'status': 'success', 'message': 'Bookmark successfully added'}, 200
+        elif not is_bookmarked: 
+            # Delete an existing bookmark
             bookmark_to_del = BookmarksModel.query.filter_by(user_id=user_id, resource_id=resource_id).first()
             db.session.delete(bookmark_to_del)
-        else:
-           return {'status': 'error', 'message': 'unsupported action'}, 400
-        db.session.commit()
-        return {'status': 'success'}, 200
+            db.session.commit()
+            return {'status': 'success', 'message': 'Bookmark successfully deleted'}, 200
         

@@ -31,4 +31,4 @@ api.add_resource(Resource2, '/resource2') # add new resource, get all resources
 api.add_resource(Search2, '/resource2/<query>') # query a resource 
 # NEW BOOKMARKS ROUTES 
 api.add_resource(Bookmarks, '/bookmarks/<user_id>') # get all bookmarks for user 
-api.add_resource(BookmarkResource, '/bookmarks/<user_id>/<resource_id>/<action>') # bookmark/unbookmark a resource 
+api.add_resource(BookmarkResource, '/bookmarks') # bookmark/unbookmark a resource 
