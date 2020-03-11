@@ -7,7 +7,7 @@ from resources.Subgoal import SubgoalResource, SubgoalsResource
 from resources.Reflection import ReflectionResource, ReflectionList
 from resources.Keyword import KeywordResource
 from resources.CrawledData import CrawledRawDataResource
-from resources.Resource2 import Search2, Resource2
+from resources.Resource2 import Search2, Resource2, Resource2Create
 from resources.Bookmarks import Bookmarks, BookmarkResource
 
 api_bp = Blueprint('api', __name__)
@@ -27,8 +27,9 @@ api.add_resource(ReflectionList, '/reflections/<user_id>') # get all reflections
 api.add_resource(KeywordResource, '/keywords') # post to get keywords
 api.add_resource(CrawledRawDataResource, '/crawledrawdata') # add text file to database
 # NEW RESOURCES ROUTES
-api.add_resource(Resource2, '/resource2') # add new resource, get all resources 
-api.add_resource(Search2, '/resource2/<query>') # query a resource 
+api.add_resource(Resource2Create, '/resource2') # add new resource
+api.add_resource(Resource2, '/resource2/<user_id>') # get all resources for user, indicate whether it has been bookmarked
+api.add_resource(Search2, '/search2/<query>') # query a resource 
 # NEW BOOKMARKS ROUTES 
 api.add_resource(Bookmarks, '/bookmarks/<user_id>') # get all bookmarks for user 
 api.add_resource(BookmarkResource, '/bookmarks') # bookmark/unbookmark a resource 

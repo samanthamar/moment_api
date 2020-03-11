@@ -26,5 +26,7 @@ class Search:
         for i in results.argsort()[-10:][::-1]:
             matches.append({'res_id': int(df.iloc[i]['id']), 
             'title':df.iloc[i]['title'],
-            'link':df.iloc[i]['link']})
+            'link':df.iloc[i]['link'],
+            'category':df.iloc[i]['category'],
+            'img':df.iloc[i]['img']})
         return matches 

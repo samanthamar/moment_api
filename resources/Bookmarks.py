@@ -34,7 +34,7 @@ class BookmarkResource(Resource):
         is_bookmarked = request.get_json()['is_bookmarked'] # expect a bool
         resource_id = request.get_json()['resource_id'] # this can be null if unbookmarking! 
         user_id = request.get_json()['user_id']
-
+        
         if is_bookmarked: 
             # Create a new bookmark
             new_bookmark = BookmarksModel(user_id=user_id, resource_id=resource_id)
