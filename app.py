@@ -29,7 +29,7 @@ api.add_resource(CrawledRawDataResource, '/crawledrawdata') # add text file to d
 # NEW RESOURCES ROUTES
 api.add_resource(Resource2Create, '/resource2') # add new resource
 api.add_resource(Resource2, '/resource2/<user_id>') # get all resources for user, indicate whether it has been bookmarked
-api.add_resource(Search2, '/search2/<query>') # query a resource 
+api.add_resource(Search2, '/search2/<user_id>/<query>') # query a resource 
 # NEW BOOKMARKS ROUTES 
 api.add_resource(Bookmarks, '/bookmarks/<user_id>') # get all bookmarks for user 
 api.add_resource(BookmarkResource, '/bookmarks') # bookmark/unbookmark a resource 

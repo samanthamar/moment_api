@@ -12,17 +12,27 @@ bookmarks_schema = BookmarksSchema(many=True)
 bookmark = BookmarksSchema()
 
 class Search2(Resource):
-    def get(self, query): 
+    def get(self, user_id, query): 
         """Search for a resource in the DB 
+        Indicate whether the resource is bookmarked or not
         """
-        print(query)
         query = preprocess(query)
-        print(query)
         search = Search(query)
         resources = ResourceModel2.query.all()
         resources = resources_schema.dump(resources) 
         matches = search.tfidf(resources) # list of dicts 
-        print(matches)
+
+        # Want to add field to see if the resource is bookmarked by user
+        bookmarks = BookmarksModel.query.filter_by(user_id=user_id)
+        bookmarks = bookmarks_schema.dump(bookmarks) # list of dicts 
+
+        for match in matches:
+            res_id = match['id']
+            match['is_bookmarked'] = False 
+            for bookmark in bookmarks: 
+                if res_id == bookmark['resource_id']:
+                    match['is_bookmarked'] = True
+
         return {'status': 'success','data': matches}, 200
 
 class Resource2(Resource):

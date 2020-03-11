@@ -24,7 +24,7 @@ class Search:
         # Return top 10 
         # NOTE: even if score is 0 it may display because of number of documents 
         for i in results.argsort()[-10:][::-1]:
-            matches.append({'res_id': int(df.iloc[i]['id']), 
+            matches.append({'id': int(df.iloc[i]['id']), 
             'title':df.iloc[i]['title'],
             'link':df.iloc[i]['link'],
             'category':df.iloc[i]['category'],
