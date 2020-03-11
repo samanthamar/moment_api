@@ -39,9 +39,11 @@ class Resource2(Resource):
         title = request.form['title']
         link = request.form['link']
         text = preprocess(text)
+        img = request.form['img']
+        category = request.form['category']
         print(text)
         # create the resource 
-        new_resource = ResourceModel2(title=title, link=link, text=text)
+        new_resource = ResourceModel2(title=title, link=link, text=text, img=img, category=category)
         db.session.add(new_resource)
         db.session.commit()
         return {'status': 'success','data': resource_schema.dump(new_resource)}, 200
