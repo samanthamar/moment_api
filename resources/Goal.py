@@ -111,12 +111,11 @@ class GoalResource(Resource):
         db.session.delete(goal)
         db.session.commit()
         return {'status': 'success'}, 200
-    
+
     def put(self): 
-        """Edit a main goal and its subgoals
-        Ability to add and delete subgoals 
+        """Edit/add/delete subgoals
         """
-        # Extract the goal info from json 
+        # Get main goal info 
         main_goal = request.get_json()['main_goal']
         goal_id = main_goal['goal_id']
         category = main_goal['category']
@@ -124,26 +123,46 @@ class GoalResource(Resource):
 
         # Get the goal to update 
         goal_update = Goal.query.filter_by(id=goal_id).first()
+        # Update the main goal
         goal_update.goal = goal
         goal_update.category = category 
         db.session.add(goal_update)
 
-        # Extract the subgoal information 
-        subgoals = request.get_json()['subgoals'] # dict 
+        # Get the subgoals from the request 
+        subgoals = request.get_json()['subgoals'] # dict {subgoal_id, subgoal, status}
+        # Determine subgoals to delete
+        subgoals_existing = Subgoal.query.filter_by(goal_id=goal_id)
+        for se in subgoals_existing: 
+            delete_flag = True 
+            for subgoal in subgoals: 
+                if subgoal['subgoal_id']: 
+                    # Check for id match 
+                    if se.id == subgoal['subgoal_id']:
+                        # since the subgoal exists in both the edit and in db
+                        # do not delete it 
+                        delete_flag = False
+            # Existing subgoal was not in the request, delete it                          
+            if delete_flag: 
+                db.session.delete(se)   
 
-        # Delete existing subgoals 
-        subgoals_to_delete = Subgoal.query.filter_by(goal_id=goal_id)
-        for subgoal in subgoals_to_delete:
-            db.session.delete(subgoal)
-
-        # Replace the subgoals for the user 
+        # Create new subgoals or edit existing 
         for subgoal in subgoals:
-            subgoal_name = subgoal['subgoal']
-            status = 'incomplete'
-            tags = self.generate_keywords_subgoals(subgoal_name, goal_id)
-            new_subgoal = Subgoal(subgoal=subgoal_name, goal_id=goal_id, tags=tags, status=status)
-            db.session.add(new_subgoal)
-        
+            # Parse request info
+            subgoal_id = subgoal['subgoal_id']
+            subgoal_title = subgoal['subgoal']
+            status = subgoal['status']
+
+            # CASE 1: create a new subgoal 
+            if not subgoal_id:
+                tags = self.generate_keywords_subgoals(subgoal_title, goal_id)
+                new_subgoal = Subgoal(subgoal_title, goal_id, tags, status)
+                db.session.add(new_subgoal)
+            # CASE 2: edit existing subgoal 
+            subgoal_to_edit = Subgoal.query.filter_by(id=subgoal_id).first()
+            if subgoal_to_edit: 
+                subgoal_to_edit.subgoal = subgoal_title 
+                subgoal_to_edit.status = status 
+
         db.session.commit()
         return {'status': 'success'}, 200 
         
