@@ -132,7 +132,9 @@ class GoalResource(Resource):
         subgoals = request.get_json()['subgoals'] # dict {subgoal_id, subgoal, status}
         # Determine subgoals to delete
         subgoals_existing = Subgoal.query.filter_by(goal_id=goal_id)
+        print("@@@@@@@@@@@@@@DETERMINING SUBGOALS TO DELETE@@@@@@@@@@@@@@@@@@")
         for se in subgoals_existing: 
+            print(se.id)
             delete_flag = True 
             for subgoal in subgoals: 
                 if subgoal['subgoal_id']: 
@@ -140,9 +142,11 @@ class GoalResource(Resource):
                     if se.id == subgoal['subgoal_id']:
                         # since the subgoal exists in both the edit and in db
                         # do not delete it 
+                        print("@@@@@@@@@@@DO NOT DELETE@@@@@@@@@@@@@@@@@")
                         delete_flag = False
             # Existing subgoal was not in the request, delete it                          
             if delete_flag: 
+                print("@@@@@@@@@@@DELETE@@@@@@@@@@@@@@@@@")
                 db.session.delete(se)   
 
         # Create new subgoals or edit existing 
@@ -151,15 +155,18 @@ class GoalResource(Resource):
             subgoal_id = subgoal['subgoal_id']
             subgoal_title = subgoal['subgoal']
             status = subgoal['status']
-
+            print("@@@@@@@@@@@SUBGOAL ID:@@@@@@@@@@@@@@@@@")
+            print(subgoal_id)
             # CASE 1: create a new subgoal 
             if not subgoal_id:
+                print("@@@@@@@@@@@CREATING NEW SUBGOAL@@@@@@@@@@@@@@@@@")
                 tags = self.generate_keywords_subgoals(subgoal_title, goal_id)
                 new_subgoal = Subgoal(subgoal_title, goal_id, tags, status)
                 db.session.add(new_subgoal)
             # CASE 2: edit existing subgoal 
             subgoal_to_edit = Subgoal.query.filter_by(id=subgoal_id).first()
             if subgoal_to_edit: 
+                print("@@@@@@@@@@@EDITING SUBGOAL@@@@@@@@@@@@@@@@@")
                 subgoal_to_edit.subgoal = subgoal_title 
                 subgoal_to_edit.status = status 
 
